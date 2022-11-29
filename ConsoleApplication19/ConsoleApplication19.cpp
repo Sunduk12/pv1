@@ -2,8 +2,12 @@
 #include <stdio.h>
 #include <sqlite3.h> 
 
+using namespace std;
+
+
 int main(int argc, char* argv[])
 {
+
     sqlite3* db;
     char* zErrMsg = 0;
     int rc;
@@ -19,3 +23,5 @@ int main(int argc, char* argv[])
     }
     sqlite3_close(db);
 }
+
+
