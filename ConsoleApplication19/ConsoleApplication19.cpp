@@ -1,9 +1,11 @@
 ﻿#include <iostream>
 #include <sqlite3.h>
+
 using namespace std;
 
 
 int main()
 {
-	cout << "Hello world!" << endl;
+	sqlite3_open (const char * power1.db, sqlite3 ** power1);
+
 } 
