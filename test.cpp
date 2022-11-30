@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include "sqlite3orm.h"
 
+sqlite3orm * sqlite3orm::p_instance = 0;
+
 static int callback(void *data, int argc, char **argv, char **azColName)
 {
     int i;
@@ -18,8 +20,6 @@ static int callback(void *data, int argc, char **argv, char **azColName)
 
 int main(int argc, char const *argv[])
 {
-    sqlite3orm * orm = new sqlite3orm("test.db");
-    sqlite3 *db = orm->getDb();
     char *zErrMsg = 0;
     int rc;
     const char *sql;
@@ -29,7 +29,7 @@ int main(int argc, char const *argv[])
     sql = "SELECT * from COMPANY";
 
     /* Execute SQL statement */
-    rc = sqlite3_exec(db, sql, callback, (void *)data, &zErrMsg);
+    rc = sqlite3orm::getInstance()->exec(sql, callback, (void *)data, &zErrMsg);
 
     if (rc != SQLITE_OK)
     {
