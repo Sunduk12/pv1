@@ -13,7 +13,7 @@ private:
         int rc = sqlite3_open(this->dbPath, &this->db);
         if (rc)
         {
-            throw std::runtime_error("Can't open database: %s\n");
+            throw std::runtime_error("Can't open database");
         }
     }
 
@@ -37,16 +37,40 @@ public:
         return this->db;
     }
 
-    int exec(
-
+    void exec(
         const char *sql,                                /* SQL to be evaluated */
         int (*callback)(void *, int, char **, char **), /* Callback function */
-        void *,                                         /* 1st argument to callback */
-        char **errmsg                                   /* Error msg written here */
+        void *data                                      /* 1st argument to callback */
     )
     {
-        return sqlite3_exec(this->db, sql, callback, (void *)"", errmsg);
+        char *zErrMsg = 0;
+        int rc = sqlite3_exec(this->db, sql, callback, (void *)data, &zErrMsg);
+        if (rc != SQLITE_OK)
+        {
+            fprintf(stderr, "SQL error: %s\n", zErrMsg);
+            sqlite3_free(zErrMsg);
+            throw std::runtime_error("SQL error");
+        }
+        else
+        {
+            fprintf(stdout, "Operation done successfully\n");
+        }
     }
 };
 
+class sqlite3ormModel
+{
+private:
+    /* data */
+public:
+    sqlite3ormModel(/* args */);
+    ~sqlite3ormModel();
+};
 
+sqlite3ormModel ::sqlite3ormModel(/* args */)
+{
+}
+
+sqlite3ormModel ::~sqlite3ormModel()
+{
+}

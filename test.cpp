@@ -24,22 +24,10 @@ int main(int argc, char const *argv[])
     int rc;
     const char *sql;
     const char *data = "Callback function called";
-
-    /* Create SQL statement */
+    
     sql = "SELECT * from COMPANY";
-
-    /* Execute SQL statement */
-    rc = sqlite3orm::getInstance()->exec(sql, callback, (void *)data, &zErrMsg);
-
-    if (rc != SQLITE_OK)
-    {
-        fprintf(stderr, "SQL error: %s\n", zErrMsg);
-        sqlite3_free(zErrMsg);
-    }
-    else
-    {
-        fprintf(stdout, "Operation done successfully\n");
-    }
+    
+    sqlite3orm::getInstance()->exec(sql, callback, (void *)data);
     
     return 0;
 }
