@@ -2,13 +2,13 @@
 #include <stdio.h>
 #include "sqlite3orm.h"
 
-sqlite3orm * sqlite3orm::p_instance = 0;
+
 
 static int callback(void *data, int argc, char **argv, char **azColName)
 {
     int i;
-    fprintf(stderr, "%s: ", (const char *)data);
-
+    fprintf(stderr, "%s: \n", (const char *)data);
+    //data.id = i;
     for (i = 0; i < argc; i++)
     {
         printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
@@ -20,14 +20,17 @@ static int callback(void *data, int argc, char **argv, char **azColName)
 
 int main(int argc, char const *argv[])
 {
-    char *zErrMsg = 0;
-    int rc;
     const char *sql;
     const char *data = "Callback function called";
     
     sql = "SELECT * from COMPANY";
     
+    user user1;
+    user& user1link = user1;
+
     sqlite3orm::getInstance()->exec(sql, callback, (void *)data);
+
+    //printf("%i\n", user1->id ); 
     
     return 0;
 }

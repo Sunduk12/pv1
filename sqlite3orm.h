@@ -1,12 +1,16 @@
 #include <sqlite3.h>
 #include <exception>
 #include <stdexcept>
+#include "sqlite3orm-models.h"
+
+
 
 class sqlite3orm
 {
 private:
     sqlite3 *db;
     const char *dbPath;
+
     sqlite3orm(const char *dbPath)
     {
         this->dbPath = dbPath;
@@ -56,21 +60,21 @@ public:
             fprintf(stdout, "Operation done successfully\n");
         }
     }
+
+    static int callback2(void *data, int argc, char **argv, char **azColName)
+    {
+        int i;
+        fprintf(stderr, "%s: \n\n", (const char *)data);
+
+        for (i = 0; i < argc; i++)
+        {
+            printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+        }
+
+        printf("\n");
+        return 0;
+    }
 };
 
-class sqlite3ormModel
-{
-private:
-    /* data */
-public:
-    sqlite3ormModel(/* args */);
-    ~sqlite3ormModel();
-};
 
-sqlite3ormModel ::sqlite3ormModel(/* args */)
-{
-}
-
-sqlite3ormModel ::~sqlite3ormModel()
-{
-}
+sqlite3orm * sqlite3orm::p_instance = 0;
