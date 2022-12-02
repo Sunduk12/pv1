@@ -28,6 +28,7 @@ public:
     int ID;
     const char* NAME;
     int AGE;
+
 };
 
 
@@ -54,7 +55,7 @@ public:
     template <typename model>
     std::vector<model*>* query(const char* sql_query) {
         auto collection = new std::vector<model*>();
-
+        
         
 
         return collection;
@@ -71,7 +72,12 @@ private:
 
 
 
-
+/// @brief 
+/// @param data 
+/// @param argc 
+/// @param argv записи таблицы
+/// @param azColName  названия колонок в таблице БД
+/// @return 
 static int callback(void *data, int argc, char **argv, char **azColName){
    int i;
    fprintf(stderr, "%s: ", (const char*)data);
