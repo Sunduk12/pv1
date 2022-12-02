@@ -5,6 +5,31 @@
             "label": "C/C++: g++ сборка активного файла",
             "command": "/usr/bin/g++",
             "args": [
+                "-std=c++11",
+                "-fdiagnostics-color=always",
+                "-g",
+                "${file}",
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}",
+                "-lsqlite3"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Задача создана отладчиком."
+        },
+        {
+            "type": "cppbuild",
+            "label": "C/C++: cpp сборка активного файла",
+            "command": "/usr/bin/cpp",
+            "args": [
                 "-fdiagnostics-color=always",
                 "-g",
                 "${file}",
@@ -17,10 +42,7 @@
             "problemMatcher": [
                 "$gcc"
             ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
+            "group": "build",
             "detail": "Задача создана отладчиком."
         }
     ],
