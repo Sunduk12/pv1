@@ -1,9 +1,29 @@
 #include <sqlite3.h>
 #include <exception>
 #include <stdexcept>
+#include <vector>
 #include "sqlite3orm-models.h"
 
+using namespace std;
 
+class sqlite3ormStorage
+{
+private:
+    sqlite3ormStorage();
+    ~sqlite3ormStorage();
+    static sqlite3ormStorage *p_instance;
+
+public:
+    user *user1;
+    static sqlite3ormStorage *getInstance()
+    {
+        if (!p_instance)
+            p_instance = new sqlite3ormStorage();
+        return p_instance;
+    }
+};
+
+sqlite3ormStorage *sqlite3ormStorage::p_instance = 0;
 
 class sqlite3orm
 {
@@ -48,7 +68,11 @@ public:
     )
     {
         char *zErrMsg = 0;
-        int rc = sqlite3_exec(this->db, sql, callback, (void *)data, &zErrMsg);
+        vector<user> users;
+        user userObj;
+        user * userPointer;
+
+        int rc = sqlite3_exec(this->db, sql, callback2, &userObj, &zErrMsg);
         if (rc != SQLITE_OK)
         {
             fprintf(stderr, "SQL error: %s\n", zErrMsg);
@@ -59,6 +83,10 @@ public:
         {
             fprintf(stdout, "Operation done successfully\n");
         }
+        
+        userPointer = &userObj;
+
+        fprintf(stdout, "out:%i", userPointer->id);
     }
 
     static int callback2(void *data, int argc, char **argv, char **azColName)
@@ -66,15 +94,20 @@ public:
         int i;
         fprintf(stderr, "%s: \n\n", (const char *)data);
 
+        user * user1 = (user *)data;
+
         for (i = 0; i < argc; i++)
         {
             printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
         }
+
+        user1->id = 100;
+
+        fprintf(stdout, "in:%i", user1->id);
 
         printf("\n");
         return 0;
     }
 };
 
-
-sqlite3orm * sqlite3orm::p_instance = 0;
+sqlite3orm *sqlite3orm::p_instance = 0;
