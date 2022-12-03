@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <exception>
 using namespace std;
 class Sql3_scheme {
 public:
@@ -30,19 +31,33 @@ public:
     }
     Sql3_scheme add_field(string field_name, string field_type) 
     {
-        vector<string>field = { field_name, field_type };
-        this->fields.push_back(field);
+        int e = 1;
+
+        
+        for (int i = 0;i < 5;i++)
+        {
+            if (field_type == type_field[i]) 
+            {
+                vector<string>field = { field_name, field_type };
+                this->fields.push_back(field);
+                e = 0;
+                break;
+            }
+        }
+        if (e) 
+            throw exception("Wrong field type! Please use types: INTEGER, BLOB, REAL, NUMERIC, TEXT");
         return *this;
     }
 private:
     string table_name;
     vector<vector<string>> fields;
+    string type_field[5] = {"INTEGER","BLOB","REAL","NUMERIC","TEXT" };
 };
 
 int main(int argc, char* argv[])
 {
     Sql3_scheme new_scheme;
-   cout<< new_scheme.add_field("age", "INT").add_field("name", "TEXT").table("chello").sql3_tab();
+    cout << new_scheme.add_field("age", "INTEGER").add_field("name", "text").add_field("address","BLOB").table("chello").sql3_tab();
 
   //  new_scheme.add_field("name", "TEXT");
     
