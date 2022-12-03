@@ -10,22 +10,37 @@ using namespace std;
 class querySQL
 {
 public:
-string selectSQL()
+
+querySQL* where(string fieldName, string meaning, string fieldIF)
 {
 
+this->resWhere = "where " + fieldName + " " + meaning + " '" + fieldIF + "';";
 
-string from = "FROM";
+return this;
+}
+
+string selectSQL()
+{
 string fields;
+if (vfields.size() == 0)
+{
+    fields = "*";
+}
+else
+{
 for (int i = 0; i < this->vfields.size(); i++)
 {  
     fields += this->vfields[i] + "," + " ";
 }
 fields.pop_back();
 fields.pop_back();
-
-string result = this->queryType + " " + fields + " " + from + " "+ tableName;
-return result;
 }
+
+string result = this->queryType + " " + fields +  " from " + tableName + "\n" + resWhere;
+return result;
+
+}
+
 
 querySQL* select(string tableName)
 {
@@ -37,7 +52,7 @@ return this;
 
 querySQL* addFields(string vfields)
 {
-this-> vfields.push_back(vfields);
+    this->vfields.push_back(vfields);
 
 return this;
 }
@@ -45,10 +60,15 @@ return this;
 
 private:
 
+
 vector <string> vfields;
 string tableName;
 string queryType;
 
+string fieldIF;
+string meaning;
+string fieldName;
+string resWhere;
 
 };
 
@@ -76,16 +96,16 @@ int main(int argc, char const *argv[])
     user& user1link = user1;
 
 querySQL *a = new querySQL();
-// vector <string> vfields = {"ID", "AGE", "NAME"};
-// string result = a->selectSQL("COMPANY", vfields);
+
+string result = a->select("COMPANY")->where("NAME", "=", "roma")->selectSQL();
 
 
-
-string result = a->select("COMPANY")->addFields("NAME")->addFields("AGE")->selectSQL();
 
 const char *requestSql  = result.data();
 sqlite3orm::getInstance()->exec(requestSql, callback, (void *)data);
 
+// querySQL wh;
 
+// wh.where("Name", "=", "roma");
 return 0;
 }
