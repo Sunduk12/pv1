@@ -11,10 +11,15 @@
 using namespace std;
 class Sql3_scheme {
 public:
-    string sql3_tab()
+
+    string sql3_tab(bool ifNotExists=false)
     {
 
-        string sql = "CREATE TABLE " +this->table_name;
+        string sql = "CREATE TABLE ";
+        if (ifNotExists)
+            sql = sql + "IF NOT EXISTS ";
+            
+        sql=sql +this->table_name;
         sql = sql + '(' + '\n';
         for (int i = 0;i < this->fields.size();i++)
         {
@@ -28,6 +33,21 @@ public:
                 sql = sql + ',' + '\n';
         }
         sql = sql + ");";
+        return sql;
+    }
+    string drop()
+    {
+        string sql="DROP TABLE "+ this->table_name;
+        return sql;
+    }
+    string rename(string newTableName)
+    {
+        string sql = "ALTER TABLE " + this->table_name + " RENAME TO " + newTableName;
+        return sql;
+    }
+    string truncate()
+    {
+        string sql = "TRUNCATE TABLE " + this->table_name;
         return sql;
     }
     Sql3_scheme* table(string table_name)
@@ -79,16 +99,17 @@ int main(int argc, char* argv[])
     const char* data = "dsfdg";
     Sql3_scheme* new_scheme = new Sql3_scheme;
    // cout << new_scheme->add_field("age", "INTEGER")->add_field("name", "text")->add_field("address","BLOB")->table("chello")->sql3_tab();
-   string sql =  new_scheme
-       ->add_field("age", "INTEGER")
-       ->add_field("name","TEXT")
-       ->add_field("address", "BLOB")
-       ->table("chello")
-       ->sql3_tab();
-  //  new_scheme.add_field("name", "TEXT");
+    string sql = new_scheme->table("chello")->rename("nechello");
+  //     ->add_field("age", "INTEGER")
+  //     ->add_field("name", "TEXT")
+  //     ->add_field("address", "BLOB")
+  //   ->table("chello")
+  //     ->sql3_tab(true);
+ 
    const char* sql1 = sql.data();
    cout << sql1<<'\n';
   sqlite3orm::getInstance()->exec(sql1,callback,(void *)data);
+    // ->rename("nechello");
   //  vector< vector<string>> mass = { { "age","INT"},{"name","TEXT"},{"address","TEXT"} };
     //cout << ("chello", mass); 
    
