@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <exception>
 
 using namespace std;
 
@@ -11,12 +12,41 @@ class querySQL
 {
 public:
 
-querySQL* where(string fieldName, string meaning, string fieldIF)
-{
+// querySQL* insert()
+// {}
 
-this->resWhere = "where " + fieldName + " " + meaning + " '" + fieldIF + "';";
+querySQL* orWhere(string fieldName, string value, string fieldIF)
+{
+this->resWhereOr = " or " + fieldName + " " + value + " '" + fieldIF + + "'";
 
 return this;
+}
+
+querySQL* andWhere(string fieldName, string value, string fieldIF)
+{
+this->resWhereAnd = " and " + fieldName + " " + value + " '" + fieldIF + + "'";
+
+return this;
+}
+
+querySQL* where(string fieldName, string value, string fieldIF)
+{
+int e = 1;
+
+    for (int i = 0; i < 7; i++)
+    {
+        if (value == conditionWhere[i])
+        {
+        e = 0;
+        break;
+        }
+    }
+
+    if (e)
+        throw std::runtime_error("no such condition exists! enter one of the following: =, !=, <>, >, <, <=, >=");
+        
+        this->resWhere = "where " + fieldName + " " + value + " '" + fieldIF + + "'";
+    return this;
 }
 
 string selectSQL()
@@ -36,7 +66,7 @@ fields.pop_back();
 fields.pop_back();
 }
 
-string result = this->queryType + " " + fields +  " from " + tableName + "\n" + resWhere;
+string result = this->queryType + " " + fields +  " from " + tableName + "\n" + resWhere + resWhereAnd + resWhereOr;
 return result;
 
 }
@@ -69,6 +99,9 @@ string fieldIF;
 string meaning;
 string fieldName;
 string resWhere;
+string conditionWhere[7] = {"=", "!=","<>", ">", "<", "<=", ">="};
+string resWhereOr;
+string resWhereAnd;
 
 };
 
@@ -89,23 +122,16 @@ static int callback(void *data, int argc, char **argv, char **azColName)
 
 int main(int argc, char const *argv[])
 {
-    const char *sql;
-    const char *data = "Callback function called";
-    
-    user user1;
-    user& user1link = user1;
-
 querySQL *a = new querySQL();
 
-string result = a->select("COMPANY")->where("NAME", "=", "roma")->selectSQL();
-
+string result = a->select("COMPANY")->orWhere("SALARY", "=", "100" )->where("NAME", "=", "roma")->selectSQL();
 
 
 const char *requestSql  = result.data();
-sqlite3orm::getInstance()->exec(requestSql, callback, (void *)data);
+sqlite3orm::getInstance()->exec(requestSql, callback, (void *)nullptr);
 
 // querySQL wh;
 
 // wh.where("Name", "=", "roma");
-return 0;
+cin.get();
 }

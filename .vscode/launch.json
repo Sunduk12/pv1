@@ -25,6 +25,19 @@
             "externalConsole": false,
             "MIMode": "lldb",
             "preLaunchTask": "C/C++: clang++ сборка активного файла"
+        },
+        {
+            "name": "C/C++: cpp сборка и отладка активного файла",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${fileDirname}/${fileBasenameNoExtension}",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb",
+            "preLaunchTask": "C/C++: cpp сборка активного файла"
         }
     ],
     "version": "2.0.0"
