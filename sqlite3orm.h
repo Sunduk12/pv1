@@ -68,11 +68,11 @@ public:
     )
     {
         char *zErrMsg = 0;
-        vector<user> users;
-        user userObj;
-        user * userPointer;
+        vector<user*> users;
+        vector<user*> *usersPointer;
+      
+        int rc = sqlite3_exec(this->db, sql, callback2, &users, &zErrMsg);
 
-        int rc = sqlite3_exec(this->db, sql, callback2, &userObj, &zErrMsg);
         if (rc != SQLITE_OK)
         {
             fprintf(stderr, "SQL error: %s\n", zErrMsg);
@@ -83,10 +83,21 @@ public:
         {
             fprintf(stdout, "Operation done successfully\n");
         }
-        
-        userPointer = &userObj;
 
-        fprintf(stdout, "out:%i", userPointer->id);
+        usersPointer = &users;
+
+        if (usersPointer->size() > 0)
+        {
+            for (int f = 0; f < usersPointer->size(); f++)
+            {
+                user *user1 = usersPointer->at(f);
+                fprintf(stdout, "out:%i %s\n", user1->id, user1->name);
+            }
+        }
+
+        // userPointer = &userObj;
+
+        // fprintf(stdout, "out:%i", userPointer->id);
     }
 
     static int callback2(void *data, int argc, char **argv, char **azColName)
@@ -94,16 +105,21 @@ public:
         int i;
         fprintf(stderr, "%s: \n\n", (const char *)data);
 
-        user * user1 = (user *)data;
+        vector<user *> *userV = (vector<user *> *)data;
 
+        // user *user = new user();
         for (i = 0; i < argc; i++)
         {
+            user *user1 = new user();
+            user1->id = i;
+            user1->name = azColName[i];
+            userV->push_back(user1);
             printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
         }
 
-        user1->id = 100;
+        // user1->id = 100;
 
-        fprintf(stdout, "in:%i", user1->id);
+        // fprintf(stdout, "in:%i", user1->id);
 
         printf("\n");
         return 0;
