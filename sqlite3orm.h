@@ -63,14 +63,12 @@ public:
     }
 
     void exec(
-        const char *sql,                                /* SQL to be evaluated */
-        int (*callback)(void *, int, char **, char **), /* Callback function */
-        void *data                                      /* 1st argument to callback */
+        const char *sql
     )
     {
         char *zErrMsg = 0;
-        vector<map<char *, char *>> rows;
-        vector<map<char *, char *>> *rowsPointer;
+        vector<map<string, string>> rows;
+        vector<map<string, string>> *rowsPointer;
 
         int rc = sqlite3_exec(this->db, sql, callback_map, &rows, &zErrMsg);
 
@@ -89,20 +87,20 @@ public:
 
         for (int f = 0; f < rowsPointer->size(); f++)
         {
-            map<char *, char *> row = rowsPointer->at(f);
-            map<char *, char *>::iterator it = row.begin();
-
+            map<string, string> row = rowsPointer->at(f);
+            map<string, string>::iterator it = row.begin();
+            cout << "--------- row #" << f+1 << endl;
             for (int i = 0; it != row.end(); it++, i++)
             {
-                fprintf(stdout, "key:%s value:%s\n", it->first, it->second);
+                cout << it->first << " : " << it->second << endl;
             }
         }
     }
 
     static int callback_map(void *data, int argc, char **argv, char **azColName)
     {
-        vector<map<char *, char *>> *rows = (vector<map<char *, char *>> *)data;
-        map<char *, char *> row;
+        vector<map<string, string>> *rows = (vector<map<string, string>> *)data;
+        map<string, string> row;
         for (int i = 0; i < argc; i++)
         {
             row[azColName[i]] = argv[i];
