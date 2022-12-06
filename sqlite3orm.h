@@ -2,6 +2,7 @@
 #include <exception>
 #include <stdexcept>
 #include <vector>
+#include <map>
 #include "sqlite3orm-models.h"
 
 using namespace std;
@@ -68,10 +69,10 @@ public:
     )
     {
         char *zErrMsg = 0;
-        vector<user*> users;
-        vector<user*> *usersPointer;
-      
-        int rc = sqlite3_exec(this->db, sql, callback2, &users, &zErrMsg);
+        vector<map<char *, char *>> rows;
+        vector<map<char *, char *>> *rowsPointer;
+
+        int rc = sqlite3_exec(this->db, sql, callback_map, &rows, &zErrMsg);
 
         if (rc != SQLITE_OK)
         {
@@ -84,44 +85,29 @@ public:
             fprintf(stdout, "Operation done successfully\n");
         }
 
-        usersPointer = &users;
+        rowsPointer = &rows;
 
-        if (usersPointer->size() > 0)
+        for (int f = 0; f < rowsPointer->size(); f++)
         {
-            for (int f = 0; f < usersPointer->size(); f++)
+            map<char *, char *> row = rowsPointer->at(f);
+            map<char *, char *>::iterator it = row.begin();
+
+            for (int i = 0; it != row.end(); it++, i++)
             {
-                user *user1 = usersPointer->at(f);
-                fprintf(stdout, "out:%i %s\n", user1->id, user1->name);
+                fprintf(stdout, "key:%s value:%s\n", it->first, it->second);
             }
         }
-
-        // userPointer = &userObj;
-
-        // fprintf(stdout, "out:%i", userPointer->id);
     }
 
-    static int callback2(void *data, int argc, char **argv, char **azColName)
+    static int callback_map(void *data, int argc, char **argv, char **azColName)
     {
-        int i;
-        fprintf(stderr, "%s: \n\n", (const char *)data);
-
-        vector<user *> *userV = (vector<user *> *)data;
-
-        // user *user = new user();
-        for (i = 0; i < argc; i++)
+        vector<map<char *, char *>> *rows = (vector<map<char *, char *>> *)data;
+        map<char *, char *> row;
+        for (int i = 0; i < argc; i++)
         {
-            user *user1 = new user();
-            user1->id = i;
-            user1->name = azColName[i];
-            userV->push_back(user1);
-            printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+            row[azColName[i]] = argv[i];
         }
-
-        // user1->id = 100;
-
-        // fprintf(stdout, "in:%i", user1->id);
-
-        printf("\n");
+        rows->push_back(row);
         return 0;
     }
 };

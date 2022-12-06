@@ -43,6 +43,7 @@ private:
 public:
     int id;
     char* name;
+    
     user()
     {
     }
