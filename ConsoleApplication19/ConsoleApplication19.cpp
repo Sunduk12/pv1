@@ -30,12 +30,12 @@ int main(int argc, char* argv[])
     const char* data = "dsfdg";
     Sql3_scheme* new_scheme = new Sql3_scheme;
    // cout << new_scheme->add_field("age", "INTEGER")->add_field("name", "text")->add_field("address","BLOB")->table("chello")->sql3_tab();
-    string sql = new_scheme->table("chello")->rename("nechello");
-  //     ->add_field("age", "INTEGER")
-  //     ->add_field("name", "TEXT")
-  //     ->add_field("address", "BLOB")
-  //   ->table("chello")
-  //     ->sql3_tab(true);
+    string sql = new_scheme->table("chello")->addColumn("ag","TEX");
+ //    ->add_field("age", "INTEGER")
+ //    ->add_field("name", "TEXT")
+ //    ->add_field("address", "BLOB")
+ //  ->table("chello")
+ //    ->sql3_tab(true);
  
    const char* sql1 = sql.data();
    cout << sql1<<'\n';

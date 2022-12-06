@@ -11,7 +11,7 @@ using namespace std;
 class Sql3_scheme {
 public:
 
-    string sql3_tab(bool ifNotExists = false)
+    string create(bool ifNotExists = false)
     {
 
         string sql = "CREATE TABLE ";
@@ -44,9 +44,33 @@ public:
         string sql = "ALTER TABLE " + this->table_name + " RENAME TO " + newTableName;
         return sql;
     }
-    string truncate()
+    string dropColumn(string columnName)
     {
-        string sql = "TRUNCATE TABLE " + this->table_name;
+        string sql = "ALTER TABLE " + this->table_name + " DROP COLUMN " + columnName;
+        return sql;
+    }
+    string addColumn(string columnName,string columnType)
+    {
+        int e = 1;
+
+
+        for (int i = 0;i < 5;i++)
+        {
+            if (columnType == type_field[i])
+            {
+                string sql = "ALTER TABLE " + this->table_name + " ADD COLUMN " + columnName + ' ' + columnType;
+                e = 0;
+                return sql;
+                break;
+            }
+        }
+        if (e)
+            throw exception("Wrong field type! Please use types: INTEGER, BLOB, REAL, NUMERIC, TEXT");
+   
+    }
+    string renameColumn(string columnName, string newColumnName)
+    {
+        string sql = "ALTER TABLE " + this->table_name + " RENAME COLUMN " + columnName +" TO " + newColumnName;
         return sql;
     }
     Sql3_scheme* table(string table_name)
