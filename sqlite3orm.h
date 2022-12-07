@@ -62,15 +62,14 @@ public:
         return this->db;
     }
 
-    void exec(
-        const char *sql
+    vector<map<string, string>> exec(
+        const char *sql /* SQL запрос */
     )
     {
         char *zErrMsg = 0;
         vector<map<string, string>> rows;
-        vector<map<string, string>> *rowsPointer;
 
-        int rc = sqlite3_exec(this->db, sql, callback_map, &rows, &zErrMsg);
+        int rc = sqlite3_exec(this->db, sql, callback, &rows, &zErrMsg);
 
         if (rc != SQLITE_OK)
         {
@@ -78,26 +77,11 @@ public:
             sqlite3_free(zErrMsg);
             throw std::runtime_error("SQL error");
         }
-        else
-        {
-            fprintf(stdout, "Operation done successfully\n");
-        }
 
-        rowsPointer = &rows;
-
-        for (int f = 0; f < rowsPointer->size(); f++)
-        {
-            map<string, string> row = rowsPointer->at(f);
-            map<string, string>::iterator it = row.begin();
-            cout << "--------- row #" << f+1 << endl;
-            for (int i = 0; it != row.end(); it++, i++)
-            {
-                cout << it->first << " : " << it->second << endl;
-            }
-        }
+        return rows;
     }
 
-    static int callback_map(void *data, int argc, char **argv, char **azColName)
+    static int callback(void *data, int argc, char **argv, char **azColName)
     {
         vector<map<string, string>> *rows = (vector<map<string, string>> *)data;
         map<string, string> row;
@@ -107,6 +91,26 @@ public:
         }
         rows->push_back(row);
         return 0;
+    }
+
+    void printResult(vector<map<string, string>> rows)
+    {
+        for (int f = 0; f < rows.size(); f++)
+        {
+            map<string, string> row = rows.at(f);
+            map<string, string>::iterator it = row.begin();
+            cout << "--------- row #" << f + 1 << endl;
+            for (int i = 0; it != row.end(); it++, i++)
+            {
+                cout << it->first << " : " << it->second << endl;
+            }
+        }
+    }
+
+    void execAndPrint(
+        const char *sql /* SQL запрос */
+    ){
+        this->printResult(this->exec(sql));
     }
 };
 
