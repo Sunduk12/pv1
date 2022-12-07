@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <vector>
 #include <map>
+#include <iostream>
 #include "sqlite3orm-models.h"
 
 using namespace std;
