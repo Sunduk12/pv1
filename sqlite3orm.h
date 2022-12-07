@@ -7,25 +7,6 @@
 
 using namespace std;
 
-class sqlite3ormStorage
-{
-private:
-    sqlite3ormStorage();
-    ~sqlite3ormStorage();
-    static sqlite3ormStorage *p_instance;
-
-public:
-    user *user1;
-    static sqlite3ormStorage *getInstance()
-    {
-        if (!p_instance)
-            p_instance = new sqlite3ormStorage();
-        return p_instance;
-    }
-};
-
-sqlite3ormStorage *sqlite3ormStorage::p_instance = 0;
-
 class sqlite3orm
 {
 private:
@@ -109,7 +90,8 @@ public:
 
     void execAndPrint(
         const char *sql /* SQL запрос */
-    ){
+    )
+    {
         this->printResult(this->exec(sql));
     }
 };
