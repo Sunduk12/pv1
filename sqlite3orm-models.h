@@ -36,12 +36,14 @@ sqlite3ormModel::~sqlite3ormModel()
 {
 }
 
-class user : private sqlite3ormModel
+class user : public sqlite3ormModel
 {
+    
 private:
 public:
     int id;
-    char *name;
+    char* name;
+    
     user()
     {
     }
