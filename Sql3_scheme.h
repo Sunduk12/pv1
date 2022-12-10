@@ -18,7 +18,7 @@ public:
         if (ifNotExists)
             sql = sql + "IF NOT EXISTS ";
 
-        sql = sql + this->table_name;
+        sql = sql + this->tableName;
         sql = sql + '(' + '\n';
         for (int i = 0;i < this->fields.size();i++)
         {
@@ -36,17 +36,17 @@ public:
     }
     string drop()
     {
-        string sql = "DROP TABLE " + this->table_name;
+        string sql = "DROP TABLE " + this->tableName;
         return sql;
     }
     string rename(string newTableName)
     {
-        string sql = "ALTER TABLE " + this->table_name + " RENAME TO " + newTableName;
+        string sql = "ALTER TABLE " + this->tableName + " RENAME TO " + newTableName;
         return sql;
     }
     string dropColumn(string columnName)
     {
-        string sql = "ALTER TABLE " + this->table_name + " DROP COLUMN " + columnName;
+        string sql = "ALTER TABLE " + this->tableName + " DROP COLUMN " + columnName;
         return sql;
     }
     string addColumn(string columnName,string columnType)
@@ -56,9 +56,9 @@ public:
 
         for (int i = 0;i < 5;i++)
         {
-            if (columnType == type_field[i])
+            if (columnType == typeField[i])
             {
-                string sql = "ALTER TABLE " + this->table_name + " ADD COLUMN " + columnName + ' ' + columnType;
+                string sql = "ALTER TABLE " + this->tableName + " ADD COLUMN " + columnName + ' ' + columnType;
                 e = 0;
                 return sql;
                 break;
@@ -70,24 +70,24 @@ public:
     }
     string renameColumn(string columnName, string newColumnName)
     {
-        string sql = "ALTER TABLE " + this->table_name + " RENAME COLUMN " + columnName +" TO " + newColumnName;
+        string sql = "ALTER TABLE " + this->tableName + " RENAME COLUMN " + columnName +" TO " + newColumnName;
         return sql;
     }
-    Sql3_scheme* table(string table_name)
+    Sql3_scheme* table(string tableName)
     {
-        this->table_name = table_name;
+        this->tableName = tableName;
         return this;
     }
-    Sql3_scheme* add_field(string field_name, string field_type)
+    Sql3_scheme* addField(string fieldName, string fieldType)
     {
         int e = 1;
 
 
         for (int i = 0;i < 5;i++)
         {
-            if (field_type == type_field[i])
+            if (fieldType == typeField[i])
             {
-                vector<string>field = { field_name, field_type };
+                vector<string>field = { fieldName, fieldType };
                 this->fields.push_back(field);
                 e = 0;
                 break;
@@ -98,7 +98,7 @@ public:
         return this;
     }
 private:
-    string table_name;
+    string tableName;
     vector<vector<string>> fields;
-    string type_field[5] = { "INTEGER","BLOB","REAL","NUMERIC","TEXT" };
+    string typeField[5] = { "INTEGER","BLOB","REAL","NUMERIC","TEXT" };
 };
