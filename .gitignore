@@ -6,3 +6,5 @@
 test*/*
 ConsoleApplication*/*
 ConsoleApplication*
+.vs
+Debug
