@@ -11,106 +11,127 @@ using namespace std;
 class querySQL
 {
 public:
+    // querySQL *update(string tableName, string colseEqualsValue, string whereCondition = "")
+    // {
+        
+    //     return this;
+    // }
 
-// querySQL* insert()
-// {}
-
-querySQL* orWhere(string fieldName, string value, string fieldIF)
-{
-this->resWhereOr = " or " + fieldName + " " + value + " '" + fieldIF + + "'";
-
-return this;
-}
-
-querySQL* andWhere(string fieldName, string value, string fieldIF)
-{
-this->resWhereAnd = " and " + fieldName + " " + value + " '" + fieldIF + + "'";
-
-return this;
-}
-
-querySQL* where(string fieldName, string value, string fieldIF)
-{
-int e = 1;
-
-    for (int i = 0; i < 7; i++)
+    querySQL *insert(string tableName, string columnName, string fieldName)
     {
-        if (value == conditionWhere[i])
-        {
-        e = 0;
-        break;
-        }
+        this->resInsert = "insert into " + tableName + " ( " + columnName + " ) " + " values " + " ( " + fieldName + " )";
+
+        return this;
     }
 
-    if (e)
-        throw std::runtime_error("no such condition exists! enter one of the following: =, !=, <>, >, <, <=, >=");
+    querySQL *orWhere(string fieldName, string value, string fieldIF)
+    {
+        this->resWhereOr = " or " + fieldName + " " + value + " '" + fieldIF + +"'";
+
+        return this;
+    }
+
+    querySQL *andWhere(string fieldName, string value, string fieldIF)
+    {
+        this->resWhereAnd = " and " + fieldName + " " + value + " '" + fieldIF + +"'";
+
+        return this;
+    }
+
+    querySQL *where(string fieldName, string value, string fieldIF)
+    {
+        int e = 1;
+
+        for (int i = 0; i < 7; i++)
+        {
+            if (value == conditionWhere[i])
+            {
+                e = 0;
+                break;
+            }
+        }
+
+        if (e)
+            throw std::runtime_error("no such condition exists! enter one of the following: =, !=, <>, >, <, <=, >=");
+
+        this->resWhere = "where " + fieldName + " " + value + " '" + fieldIF + +"'";
+        return this;
+    }
+
+    querySQL *selectTable(string tableName)
+    {
+
+        this->tableName = tableName;
+        this->queryType = "select";
+
+        return this;
+    }
+
+    string selectSQL()
+    {
+        string fields;
+
+        if (vfields.size() == 0)
+        {
+            fields = "*";
+        }
+        else
+        {
+            for (int i = 0; i < this->vfields.size(); i++)
+            {
+                fields += this->vfields[i] + "," + " ";
+            }
+            fields.pop_back();
+            fields.pop_back();
+        }
+
+        resSelectTable = this->queryType + " " + fields + " from " + tableName + "\n";
+
         
-        this->resWhere = "where " + fieldName + " " + value + " '" + fieldIF + + "'";
-    return this;
-}
+        string result = resSelectTable + resAddFields + resWhere + resWhereAnd + resWhereOr + resInsert;
+        return result;
+    }
 
-string selectSQL()
-{
-string fields;
-if (vfields.size() == 0)
-{
-    fields = "*";
-}
-else
-{
-for (int i = 0; i < this->vfields.size(); i++)
-{  
-    fields += this->vfields[i] + "," + " ";
-}
-fields.pop_back();
-fields.pop_back();
-}
+    querySQL *select(string tableName)
+    {
+        this->tableName = tableName;
+        this->queryType = "select";
 
-string result = this->queryType + " " + fields +  " from " + tableName + "\n" + resWhere + resWhereAnd + resWhereOr;
-return result;
+        return this;
+    }
 
-}
+    querySQL *addFields(string vfields)
+    {
+        this->vfields.push_back(vfields);
 
-
-querySQL* select(string tableName)
-{
-this->tableName = tableName;
-this->queryType = "select";
-
-return this;
-}
-
-querySQL* addFields(string vfields)
-{
-    this->vfields.push_back(vfields);
-
-return this;
-}
-
+        return this;
+    }
 
 private:
+    vector<string> vfields;
+    string tableName;
+    string queryType;
 
+    string fieldIF;
+    string meaning;
+    string fieldName;
+    string resWhere;
+    string conditionWhere[7] = {"=", "!=", "<>", ">", "<", "<=", ">="};
 
-vector <string> vfields;
-string tableName;
-string queryType;
+    string resWhereOr;
+    string resWhereAnd;
+    string resInsert;
+    string resSelectTable;
+    string resAddFields;
 
-string fieldIF;
-string meaning;
-string fieldName;
-string resWhere;
-string conditionWhere[7] = {"=", "!=","<>", ">", "<", "<=", ">="};
-string resWhereOr;
-string resWhereAnd;
 
 };
-
 
 static int callback(void *data, int argc, char **argv, char **azColName)
 {
     int i;
     fprintf(stderr, "%s: \n", (const char *)data);
-    //data.id = i;
+    // data.id = i;
     for (i = 0; i < argc; i++)
     {
         printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
@@ -122,16 +143,21 @@ static int callback(void *data, int argc, char **argv, char **azColName)
 
 int main(int argc, char const *argv[])
 {
-querySQL *a = new querySQL();
+    const char *sql;
+    const char *data = "Callback function called";
 
-string result = a->select("COMPANY")->orWhere("SALARY", "=", "100" )->where("NAME", "=", "roma")->selectSQL();
+    user user1;
+    user &user1link = user1;
 
+    querySQL *a = new querySQL();
 
-const char *requestSql  = result.data();
-sqlite3orm::getInstance()->exec(requestSql, callback, (void *)nullptr);
+    //  cout << a->select("COMPANY")->insert("COMPANY","ID, NAME, AGE", "10,'vlad', 37")->selectSQL();
 
-// querySQL wh;
+    // string result = a->insert("COMPANY", "ID, NAME, AGE", "21,'misha', 74000")->selectSQL();
+cout << a->selectTable("COMPANY")->addFields("NAME")->addFields("AGE")->selectSQL();
 
-// wh.where("Name", "=", "roma");
-cin.get();
+    // const char *requestSql = result.data();
+    // sqlite3orm::getInstance()->exec(requestSql, callback, (void *)data);
+
+    return 0;
 }
