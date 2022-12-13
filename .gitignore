@@ -1,0 +1,11 @@
+*
+!*.*
+!*/
+.vscode
+*test.cpp
+test*/*
+ConsoleApplication*/*
+ConsoleApplication*
+.vs
+Debug
+*.dSYM

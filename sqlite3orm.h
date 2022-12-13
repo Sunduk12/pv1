@@ -1,9 +1,12 @@
 #include <sqlite3.h>
 #include <exception>
 #include <stdexcept>
+#include <vector>
+#include <map>
+#include <iostream>
 #include "sqlite3orm-models.h"
 
-
+using namespace std;
 
 class sqlite3orm
 {
@@ -41,40 +44,57 @@ public:
         return this->db;
     }
 
-    void exec(
-        const char *sql,                                /* SQL to be evaluated */
-        int (*callback)(void *, int, char **, char **), /* Callback function */
-        void *data                                      /* 1st argument to callback */
+    vector<map<string, string>> exec(
+        const char *sql /* SQL запрос */
     )
     {
         char *zErrMsg = 0;
-        int rc = sqlite3_exec(this->db, sql, callback, (void *)data, &zErrMsg);
+        vector<map<string, string>> rows;
+
+        int rc = sqlite3_exec(this->db, sql, callback, &rows, &zErrMsg);
+
         if (rc != SQLITE_OK)
         {
             fprintf(stderr, "SQL error: %s\n", zErrMsg);
             sqlite3_free(zErrMsg);
             throw std::runtime_error("SQL error");
         }
-        else
+
+        return rows;
+    }
+
+    static int callback(void *data, int argc, char **argv, char **azColName)
+    {
+        vector<map<string, string>> *rows = (vector<map<string, string>> *)data;
+        map<string, string> row;
+        for (int i = 0; i < argc; i++)
         {
-            fprintf(stdout, "Operation done successfully\n");
+            row[azColName[i]] = argv[i];
+        }
+        rows->push_back(row);
+        return 0;
+    }
+
+    void printResult(vector<map<string, string>> rows)
+    {
+        for (int f = 0; f < rows.size(); f++)
+        {
+            map<string, string> row = rows.at(f);
+            map<string, string>::iterator it = row.begin();
+            cout << "--------- row #" << f + 1 << endl;
+            for (int i = 0; it != row.end(); it++, i++)
+            {
+                cout << it->first << " : " << it->second << endl;
+            }
         }
     }
 
-    static int callback2(void *data, int argc, char **argv, char **azColName)
+    void execAndPrint(
+        const char *sql /* SQL запрос */
+    )
     {
-        int i;
-        fprintf(stderr, "%s: \n\n", (const char *)data);
-
-        for (i = 0; i < argc; i++)
-        {
-            printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
-        }
-
-        printf("\n");
-        return 0;
+        this->printResult(this->exec(sql));
     }
 };
 
-
-sqlite3orm * sqlite3orm::p_instance = 0;
+sqlite3orm *sqlite3orm::p_instance = 0;
