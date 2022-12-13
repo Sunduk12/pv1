@@ -8,3 +8,4 @@ ConsoleApplication*/*
 ConsoleApplication*
 .vs
 Debug
+*.dSYM
