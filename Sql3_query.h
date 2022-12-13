@@ -1,12 +1,4 @@
-#include <sqlite3.h>
-#include <stdio.h>
-#include "sqlite3orm.h"
-#include <string>
-#include <vector>
-#include <iostream>
-#include <exception>
 
-using namespace std;
 
 class querySQL
 {
