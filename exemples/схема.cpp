@@ -15,9 +15,9 @@ int main()
 	string sql = new_scheme->table("chello") // указываем имя таблицы
 		->addField(new_scheme->newField()->name("age")->integer()) // добавляем поле типа INTEGER
 		->addField(new_scheme->newField()->name("name")->text()) // добавляем поле типа TEXT
-		->addField(new_scheme->newFieled()->name("sgz")->blob()) //добавляем поле типа BLOB
-		->addField(new_scheme->newFieled()->name("wgds")->real()) // добавляем поле типа REAL
-		->addField(new_scheme->newFieled()->name("fgdfg")->numeric()) //добавляем поле типа NUMERIC
+		->addField(new_scheme->newField()->name("sgz")->blob()) //добавляем поле типа BLOB
+		->addField(new_scheme->newField()->name("wgds")->real()) // добавляем поле типа REAL
+		->addField(new_scheme->newField()->name("fgdfg")->numeric()) //добавляем поле типа NUMERIC
 		->create(true); // если тру, влючает иф нот екзист
 
 	const char* sqll = sql.data();
