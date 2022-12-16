@@ -1,4 +1,4 @@
-#include <stdio.h> 
+Ôªø#include <stdio.h> 
 #include <sqlite3.h>  
 #include <string> 
 #include <iostream> 
@@ -12,13 +12,13 @@ using namespace std;
 int main()
 {
 	Sql3_scheme* new_scheme = new Sql3_scheme;
-	string sql = new_scheme->table("chello") // ÛÍ‡Á˚‚‡ÂÏ ËÏˇ Ú‡·ÎËˆ˚
-		->addField("age", "INTEGER") // ‰Ó·‡‚ÎˇÂÏ ÔÓÎÂ ÚËÔ‡ INTEGER
-		->addField("name", "TEXT") // ‰Ó·‡‚ÎˇÂÏ ÔÓÎÂ ÚËÔ‡ TEXT
-		->addField("sgz", "BLOB") //‰Ó·‡‚ÎˇÂÏ ÔÓÎÂ ÚËÔ‡ BLOB
-		->addField("wgds", "REAL") // ‰Ó·‡‚ÎˇÂÏ ÔÓÎÂ ÚËÔ‡ REAL
-		->addField("fgdfg", "NUMERIC") //‰Ó·‡‚ÎˇÂÏ ÔÓÎÂ ÚËÔ‡ NUMERIC
-		->create(true); // ÂÒÎË ÚÛ, ‚Î˛˜‡ÂÚ ËÙ ÌÓÚ ÂÍÁËÒÚ
+	string sql = new_scheme->table("chello") // —É–∫–∞–∑—ã–≤–∞–µ–º –∏–º—è —Ç–∞–±–ª–∏—Ü—ã
+		->addField(new_scheme->newField()->name("age")->integer()) // –¥–æ–±–∞–≤–ª—è–µ–º –ø–æ–ª–µ —Ç–∏–ø–∞ INTEGER
+		->addField(new_scheme->newField()->name("name")->text()) // –¥–æ–±–∞–≤–ª—è–µ–º –ø–æ–ª–µ —Ç–∏–ø–∞ TEXT
+		->addField(new_scheme->newField()->name("sgz")->blob()) //–¥–æ–±–∞–≤–ª—è–µ–º –ø–æ–ª–µ —Ç–∏–ø–∞ BLOB
+		->addField(new_scheme->newField()->name("wgds")->real()) // –¥–æ–±–∞–≤–ª—è–µ–º –ø–æ–ª–µ —Ç–∏–ø–∞ REAL
+		->addField(new_scheme->newField()->name("fgdfg")->numeric()) //–¥–æ–±–∞–≤–ª—è–µ–º –ø–æ–ª–µ —Ç–∏–ø–∞ NUMERIC
+		->create(true); // –µ—Å–ª–∏ —Ç—Ä—É, –≤–ª—é—á–∞–µ—Ç –∏—Ñ –Ω–æ—Ç –µ–∫–∑–∏—Å—Ç
 
 	const char* sqll = sql.data();
 	cout << sqll << '\n';
@@ -26,35 +26,35 @@ int main()
 
 	Sql3_scheme* new_scheme4 = new Sql3_scheme;
 	string Sql2 = new_scheme4->table("chello")
-		->rename("Hello");//ÔÓÏÂÌˇÎË Ì‡Á‚‡ÌËÂ Ú‡·ÎËˆ˚
+		->rename("Hello");//–ø–æ–º–µ–Ω—è–ª–∏ –Ω–∞–∑–≤–∞–Ω–∏–µ —Ç–∞–±–ª–∏—Ü—ã
 	const char* sqll3 = Sql2.data();
 	cout << sqll3 << '\n';
 	sqlite3orm::getInstance()->execAndPrint(sqll3);
 
 	Sql3_scheme* new_scheme5 = new Sql3_scheme;
 	string Sql3 = new_scheme5->table("Hello")
-		->addColumn("sdada", "TEXT");//‰Ó·‡‚ËÎË ÌÓ‚Û˛ ÍÓÎÓÌÍÛ
+		->addColumn("sdada", "TEXT");//–¥–æ–±–∞–≤–∏–ª–∏ –Ω–æ–≤—É—é –∫–æ–ª–æ–Ω–∫—É
 	const char* sqll4 = Sql3.data();
 	cout << sqll4 << '\n';
 	sqlite3orm::getInstance()->execAndPrint(sqll4);
 
 	Sql3_scheme* new_scheme6 = new Sql3_scheme;
 	string Sql4 = new_scheme6->table("Hello")
-		->renameColumn("sdada", "Text"); //ÔÂÂËÏÂÌÓ‚‡ÎË ÍÓÎÓÌÍÛ
+		->renameColumn("sdada", "Text"); //–ø–µ—Ä–µ–∏–º–µ–Ω–æ–≤–∞–ª–∏ –∫–æ–ª–æ–Ω–∫—É
 	const char* sqll5 = Sql4.data();
 	cout << sqll5 << '\n';
 	sqlite3orm::getInstance()->execAndPrint(sqll5);
 
 	Sql3_scheme* new_scheme2 = new Sql3_scheme;
 	string Sql = new_scheme2->table("Hello")
-		->dropColumn("age"); //Û‰‡ÎËÚ¸ ÍÓÎÓÌÍÛ age
+		->dropColumn("age"); //—É–¥–∞–ª–∏—Ç—å –∫–æ–ª–æ–Ω–∫—É age
 	const char* sqll1 = Sql.data();
 	cout << sqll1 << '\n';
 	sqlite3orm::getInstance()->execAndPrint(sqll1);
 
 	//Sql3_scheme* new_scheme3 = new Sql3_scheme;
 	//string Sql1 = new_scheme3->table("Hello")
-	//	->drop();// Û‰‡ÎÂÌËÂ Ú‡·ÎËˆ˚
+	//	->drop();// —É–¥–∞–ª–µ–Ω–∏–µ —Ç–∞–±–ª–∏—Ü—ã
 	//const char* sqll2 = Sql1.data();
 	//cout << sqll2 << '\n';
 	//sqlite3orm::getInstance()->execAndPrint(sqll2);

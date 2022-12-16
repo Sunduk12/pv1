@@ -7,6 +7,48 @@
 
 
 using namespace std;
+class Fields
+{
+public:
+    Fields* name(string fieldName)
+    {
+        this->fieldName = fieldName;
+        return this;
+    }
+    Fields* integer()
+    {
+        this->fieldType = "INTEGER";
+        return this;
+    }
+    Fields* text()
+    {
+        this->fieldType = "TEXT";
+        return this;
+    }
+    Fields* blob()
+    {
+        this->fieldType = "BLOB";
+        return this;
+    }
+    Fields* numeric()
+    {
+        this->fieldType = "NUMERIC";
+        return this;
+    }
+    Fields* real()
+    {
+        this->fieldType = "REAL";
+        return this;
+    }
+    string getField()
+    {
+        return this->fieldName + ' ' + this->fieldType;
+    }
+private:
+    string fieldType;
+    string fieldName;
+    string fieldIndex;
+};
 
 class Sql3_scheme {
 public:
@@ -21,11 +63,9 @@ public:
         sql = sql + this->tableName;
         sql = sql + '(' + '\n';
         for (int i = 0;i < this->fields.size();i++)
-        {
-            for (int j = 0; j < this->fields[i].size();j++)
-            {
-                sql = sql + this->fields[i][j] + "    ";
-            }
+        {    
+                sql = sql + this->fields[i]->getField();
+            
             if (this->fields.size() - 1 == i)
                 sql = sql + '\n';
             else
@@ -34,9 +74,12 @@ public:
         sql = sql + ");";
         return sql;
     }
-    string drop()
+    string drop(bool ifExists = false)
     {
-        string sql = "DROP TABLE " + this->tableName;
+        string sql = "DROP TABLE ";
+        if (ifExists)
+            sql = sql + "IF NOT EXISTS ";
+       sql=sql + this->tableName;
         return sql;
     }
     string rename(string newTableName)
@@ -66,7 +109,6 @@ public:
         }
         if (e)
             throw exception("Wrong field type! Please use types: INTEGER, BLOB, REAL, NUMERIC, TEXT");
-   
     }
     string renameColumn(string columnName, string newColumnName)
     {
@@ -78,27 +120,19 @@ public:
         this->tableName = tableName;
         return this;
     }
-    Sql3_scheme* addField(string fieldName, string fieldType)
+    Sql3_scheme* addField(Fields* field)
     {
-        int e = 1;
-
-
-        for (int i = 0;i < 5;i++)
-        {
-            if (fieldType == typeField[i])
-            {
-                vector<string>field = { fieldName, fieldType };
-                this->fields.push_back(field);
-                e = 0;
-                break;
-            }
-        }
-        if (e)
-            throw exception("Wrong field type! Please use types: INTEGER, BLOB, REAL, NUMERIC, TEXT");
+       this->fields.push_back(field);
         return this;
+    }
+    Fields* newField()
+    {
+        Fields* field = new Fields;
+        return field;
     }
 private:
     string tableName;
-    vector<vector<string>> fields;
+    vector<Fields*> fields;
     string typeField[5] = { "INTEGER","BLOB","REAL","NUMERIC","TEXT" };
 };
+

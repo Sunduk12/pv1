@@ -69,7 +69,7 @@ public:
         map<string, string> row;
         for (int i = 0; i < argc; i++)
         {
-            row[azColName[i]] = argv[i];
+            row[azColName[i]] = argv[i] ? argv[i] : "NULL";
         }
         rows->push_back(row);
         return 0;
