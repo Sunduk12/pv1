@@ -3,18 +3,117 @@
 class querySQL
 {
 public:
-    // querySQL *update(string tableName, string colseEqualsValue, string whereCondition = "")
-    // {
-        
-    //     return this;
-    // }
-
-    querySQL *insert(string tableName, string columnName, string fieldName)
+    // ОСНОВНОЙ БИЛДЕР
+    string SQL()
     {
-        this->resInsert = "insert into " + tableName + " ( " + columnName + " ) " + " values " + " ( " + fieldName + " )";
+
+        if (this->queryType == "select")
+            return this->buildSelect();
+        else if (this->queryType == "insert")
+            return this->buildInsert();
+        else if (this->queryType == "update")
+            return this->buildUpdate();
+        else if (this->queryType == "delete")
+            return this->buildDelete();
+        else if (this->queryType == "replace")
+            return this->buildReplace();
+
+        return "error";
+    }
+    // билдеры
+    string buildReplace()
+    {
+        resReplace = "INSERT OR REPLACE INTO " + this->tableName + " ( " + strColumnReplace + " ) " + "\n" + "VALUES " + " ( " + strFieldReplace + " ) ";
+
+        return resReplace;
+    }
+
+    string buildDelete()
+    {
+        resDelete = "DELETE FROM " + this->tableName + "\n" + "WHERE " + strWhereDelete;
+
+        return resDelete;
+    }
+
+    string buildUpdate()
+    {
+
+        resUpdate = "UPDATE " + this->tableName + "\n" + "SET " + strSetUpdate + "\n" + "WHERE " + strWhereUpdate + ";";
+
+        return resUpdate;
+    }
+
+    string buildSelect()
+    {
+        string fields;
+
+        if (vfields.size() == 0)
+        {
+            fields = "*";
+        }
+        else
+        {
+            for (int i = 0; i < this->vfields.size(); i++)
+            {
+                fields += this->vfields[i] + "," + " ";
+            }
+            fields.pop_back();
+            fields.pop_back();
+        }
+        resSelectTable = this->queryType + " " + fields + " from " + tableName + " " + resWhere + " " + resWhereAnd + " " + resWhereOr;
+
+        return resSelectTable;
+    }
+
+    string buildInsert()
+    {
+        resInsert = "insert into " + this->tableName + " ( " + columnName + " ) " + " values " + " ( " + fieldName + " )";
+
+        return resInsert;
+    }
+
+    /////////////////////////////////
+    // queryType
+
+    querySQL *select()
+    {
+        this->queryType = "select";
+        return this;
+    }
+
+    querySQL *insert(string expression)
+    {
+        this->queryType = "insert";
+        return this;
+    }
+
+    querySQL *update()
+    {
+        this->queryType = "update";
+        return this;
+    }
+
+    querySQL *delete1()
+    {
+        this->queryType = "delete";
+        return this;
+    }
+
+    querySQL *replace()
+    {
+        this->queryType = "replace";
+        return this;
+    }
+
+    querySQL *table(string tableName)
+    {
+        this->tableName = tableName;
 
         return this;
     }
+
+    //------------------------------------
+    // сбор информации
 
     querySQL *orWhere(string fieldName, string value, string fieldIF)
     {
@@ -50,44 +149,9 @@ public:
         return this;
     }
 
-    querySQL *selectTable(string tableName)
+    querySQL *addColumnName(string columnName)
     {
-
-        this->tableName = tableName;
-        this->queryType = "select";
-
-        return this;
-    }
-
-    string selectSQL()
-    {
-        string fields;
-
-        if (vfields.size() == 0)
-        {
-            fields = "*";
-        }
-        else
-        {
-            for (int i = 0; i < this->vfields.size(); i++)
-            {
-                fields += this->vfields[i] + "," + " ";
-            }
-            fields.pop_back();
-            fields.pop_back();
-        }
-
-        resSelectTable = this->queryType + " " + fields + " from " + tableName + "\n";
-
-        
-        string result = resSelectTable + resAddFields + resWhere + resWhereAnd + resWhereOr + resInsert;
-        return result;
-    }
-
-    querySQL *select(string tableName)
-    {
-        this->tableName = tableName;
-        this->queryType = "select";
+        this->columnName = columnName;
 
         return this;
     }
@@ -95,40 +159,77 @@ public:
     querySQL *addFields(string vfields)
     {
         this->vfields.push_back(vfields);
+        this->fieldName = vfields;
+
+        return this;
+    }
+
+    querySQL *setUpdate(string strSetUpdate)
+    {
+        this->strSetUpdate = strSetUpdate;
+
+        return this;
+    }
+
+    querySQL *whereUpdate(string strWhereUpdate)
+    {
+        this->strWhereUpdate = strWhereUpdate;
+
+        return this;
+    }
+
+    querySQL *whereDelete(string strWhereDelete)
+    {
+        this->strWhereDelete = strWhereDelete;
+
+        return this;
+    }
+
+    querySQL *fieldsReplace(string strFieldReplace)
+    {
+        this->strFieldReplace = strFieldReplace;
+
+        return this;
+    }
+
+    querySQL *columnReplace(string strColumnReplace)
+    {
+        this->strColumnReplace = strColumnReplace;
 
         return this;
     }
 
 private:
+    // исключения
+    string fieldIF;
+    string conditionWhere[7] = {"=", "!=", "<>", ">", "<", "<=", ">="};
+
+    // delete informatiom
+    string strWhereDelete;
+
+    //  update informatiom
+    string strSetUpdate;
+    string strWhereUpdate;
+
+    // replace information
+    string strColumnReplace;
+    string strFieldReplace;
+
+    // результаты сбора инф
     vector<string> vfields;
     string tableName;
     string queryType;
-
-    string fieldIF;
-    string meaning;
     string fieldName;
+    string columnName;
     string resWhere;
-    string conditionWhere[7] = {"=", "!=", "<>", ">", "<", "<=", ">="};
-
     string resWhereOr;
     string resWhereAnd;
-    string resInsert;
-    string resSelectTable;
     string resAddFields;
 
-
+    // результаты билдеров
+    string resInsert;
+    string resSelectTable;
+    string resUpdate;
+    string resDelete;
+    string resReplace;
 };
-
-static int callback(void *data, int argc, char **argv, char **azColName)
-{
-    int i;
-    fprintf(stderr, "%s: \n", (const char *)data);
-    // data.id = i;
-    for (i = 0; i < argc; i++)
-    {
-        printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
-    }
-
-    printf("\n");
-    return 0;
-}

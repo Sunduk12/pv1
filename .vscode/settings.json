@@ -7,7 +7,9 @@
         "istream": "cpp",
         "__config": "cpp",
         "streambuf": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "__availability": "cpp",
+        "__hash_table": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }
