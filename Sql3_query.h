@@ -1,5 +1,3 @@
-
-
 class querySQL
 {
 public:
@@ -23,7 +21,7 @@ public:
     // билдеры
     string buildReplace()
     {
-        resReplace = "INSERT OR REPLACE INTO " + this->tableName + " ( " + strColumnReplace + " ) " + "\n" + "VALUES " + " ( " + strFieldReplace + " ) ";
+        resReplace = "INSERT OR REPLACE INTO " + this->tableName + " ( " + columnName + " ) " + "\n" + "VALUES " + " ( " + fieldName + " ) ";
 
         return resReplace;
     }
@@ -149,7 +147,7 @@ public:
         return this;
     }
 
-    querySQL *addColumnName(string columnName)
+    querySQL *addColumn(string columnName)
     {
         this->columnName = columnName;
 
@@ -185,20 +183,6 @@ public:
         return this;
     }
 
-    querySQL *fieldsReplace(string strFieldReplace)
-    {
-        this->strFieldReplace = strFieldReplace;
-
-        return this;
-    }
-
-    querySQL *columnReplace(string strColumnReplace)
-    {
-        this->strColumnReplace = strColumnReplace;
-
-        return this;
-    }
-
 private:
     // исключения
     string fieldIF;
@@ -210,10 +194,6 @@ private:
     //  update informatiom
     string strSetUpdate;
     string strWhereUpdate;
-
-    // replace information
-    string strColumnReplace;
-    string strFieldReplace;
 
     // результаты сбора инф
     vector<string> vfields;
