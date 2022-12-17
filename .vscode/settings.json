@@ -9,7 +9,8 @@
         "streambuf": "cpp",
         "string": "cpp",
         "__availability": "cpp",
-        "__hash_table": "cpp"
+        "__hash_table": "cpp",
+        "exception": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

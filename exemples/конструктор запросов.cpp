@@ -5,8 +5,9 @@
 #include <iostream>
 #include <exception>
 
-#include "sqlite3orm.h"
-#include "Sql3_query.h"
+#include "../sqlite3orm.h" 
+// #include "../Sql3_scheme.h"
+#include "../Sql3_query.h"
 
 using namespace std;
 
