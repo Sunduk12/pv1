@@ -21,24 +21,24 @@ public:
     // билдеры
     string buildReplace()
     {
-        resReplace = "INSERT OR REPLACE INTO " + this->tableName + " ( " + columnName + " ) " + "\n" + "VALUES " + " ( " + fieldName + " ) ";
+        sql = "INSERT OR REPLACE INTO " + this->tableName + " ( " + columnName + " ) " + "\n" + "VALUES " + " ( " + fieldName + " ) ";
 
-        return resReplace;
+        return sql;
     }
 
     string buildDelete()
     {
-        resDelete = "DELETE FROM " + this->tableName + "\n" + "WHERE " + strWhereDelete;
+        sql = "DELETE FROM " + this->tableName + "\n" + "WHERE " + strWhereDelete;
 
-        return resDelete;
+        return sql;
     }
 
     string buildUpdate()
     {
 
-        resUpdate = "UPDATE " + this->tableName + "\n" + "SET " + strSetUpdate + "\n" + "WHERE " + strWhereUpdate + ";";
+        sql = "UPDATE " + this->tableName + "\n" + "SET " + strSetUpdate + "\n" + "WHERE " + strWhereUpdate + ";";
 
-        return resUpdate;
+        return sql;
     }
 
     string buildSelect()
@@ -58,16 +58,16 @@ public:
             fields.pop_back();
             fields.pop_back();
         }
-        resSelectTable = this->queryType + " " + fields + " from " + tableName + " " + resWhere + " " + resWhereAnd + " " + resWhereOr;
+        sql = this->queryType + " " + fields + " from " + tableName + " " + resWhere + " " + resWhereAnd + " " + resWhereOr;
 
-        return resSelectTable;
+        return sql;
     }
 
     string buildInsert()
     {
-        resInsert = "insert into " + this->tableName + " ( " + columnName + " ) " + " values " + " ( " + fieldName + " )";
+        sql = "insert into " + this->tableName + " ( " + columnName + " ) " + " values " + " ( " + fieldName + " )";
 
-        return resInsert;
+        return sql;
     }
 
     /////////////////////////////////
@@ -207,9 +207,6 @@ private:
     string resAddFields;
 
     // результаты билдеров
-    string resInsert;
-    string resSelectTable;
-    string resUpdate;
-    string resDelete;
-    string resReplace;
+    string sql;
+
 };
