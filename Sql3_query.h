@@ -4,7 +4,8 @@ public:
     // ОСНОВНОЙ БИЛДЕР
     string SQL()
     {
-
+        // обработка всех запросов
+        //queryType
         if (this->queryType == "select")
             return this->buildSelect();
         else if (this->queryType == "insert")
@@ -15,10 +16,79 @@ public:
             return this->buildDelete();
         else if (this->queryType == "replace")
             return this->buildReplace();
+        else if (this->queryType == "distinct")
+            return this->buildDistinct();
+            //operatorType
+        else if(this->operatorType == "IN")
+            return this->buildOperatorIN();
+        else if(this->operatorType == "NOT IN")
+            return this->buildOperatorNOTIN();
+        else if(this->operatorType == "BETWEEN")
+            return this->buildOperatorBetween();
+        else if(this->operatorType == "NOT BETWEEN")
+            return this->buildOperatorNotBetween();
+        else if(this->operatorType == "LIKE")
+            return this->buildOperatorLIKE();
+        else if(this->operatorType == "GLOB")
+            return this->buildOperatorGLOB();
+
 
         return "error";
     }
-    // билдеры
+    // билдеры для operatorType ___________
+    string buildOperatorGLOB()
+    {
+        sql = "SELECT * FROM " + this->tableName + "\n" + "WHERE " + this->columnName + " GLOB "  + this->fieldName + ";";
+
+        return sql;
+    }
+
+
+
+    string buildOperatorLIKE()
+    {
+        sql = "SELECT * FROM " + this->tableName + "\n" + "WHERE " + this->columnName + " LIKE "  + this->fieldName + ";";
+
+        return sql;
+    }
+
+
+    string buildOperatorIN()
+    {
+        sql = "SELECT * FROM " + this->tableName + "\n" + "WHERE " + this->columnName + " IN " + " ( " + this->fieldName + " ) " + ";";
+
+        return sql;
+    }
+
+       string buildOperatorNOTIN()
+    {
+        sql = "SELECT * FROM "+ this->tableName + "\n" + "WHERE " + this->columnName + " NOT IN " + " ( " + this->fieldName + " ) " + ";";
+
+        return sql;
+    }
+
+    string buildOperatorBetween()
+    {
+        sql = "SELECT * FROM " + this->tableName + "\n" + "WHERE " + this->columnName + " BETWEEN " + fields1 + " AND " + fields2 +  ";";
+
+        return sql;
+    }
+
+    string buildOperatorNotBetween()
+    {
+        sql = "SELECT * FROM " + this->tableName + "\n" + "WHERE " + this->columnName + " NOT BETWEEN " + fields1 + " AND " + fields2 +  ";";
+
+        return sql;
+    }
+    // билдеры для queryType _______________
+    string buildDistinct()
+    {
+        // выборка уникальных значений из колонки!
+        sql = "SELECT DISTINCT " + columnName + " FROM " + this->tableName  + ";";
+
+        return sql;
+    }
+
     string buildReplace()
     {
         sql = "INSERT OR REPLACE INTO " + this->tableName + " ( " + columnName + " ) " + "\n" + "VALUES " + " ( " + fieldName + " ) ";
@@ -58,20 +128,77 @@ public:
             fields.pop_back();
             fields.pop_back();
         }
-        sql = this->queryType + " " + fields + " from " + tableName + " " + resWhere + " " + resWhereAnd + " " + resWhereOr;
+        sql = this->queryType + " " + fields + " FROM " + tableName + " " + resWhere + " " + resWhereAnd + " " + resWhereOr;
 
         return sql;
     }
 
     string buildInsert()
     {
-        sql = "insert into " + this->tableName + " ( " + columnName + " ) " + " values " + " ( " + fieldName + " )";
+        sql = "INSERT INTO " + this->tableName + " ( " + columnName + " ) " + " VALUES " + " ( " + fieldName + " )";
 
         return sql;
     }
+    // дополнительный функционал
+
+        void clear()
+    {
+        this->tableName.clear();
+        this->queryType.clear();
+        this->fieldName.clear();
+        this->columnName.clear();
+        this->resAddFields.clear();
+        this->resWhere.clear();
+        this->resWhereOr.clear();
+        this->resWhereAnd.clear();
+        this->sql.clear();
+    }
+
 
     /////////////////////////////////
-    // queryType
+    //filter operators
+    querySQL *operatorIN()
+    {
+        this->operatorType = "IN";
+
+        return this;
+    }
+
+    querySQL *operatorNOTIN()
+    {
+        this->operatorType = "NOT IN";
+
+        return this;
+    }
+
+    querySQL *operatorBetween()
+    {
+        this->operatorType = "BETWEEN";
+
+        return this;
+    }
+
+    querySQL *operatorNotBetween()
+    {
+        this->operatorType = "NOT BETWEEN";
+
+        return this;
+    }
+
+    querySQL *operatorLIKE()
+    {
+        this->operatorType = "LIKE";
+
+        return this;
+    }
+
+    querySQL *operatorGLOB()
+    {
+        this->operatorType = "GLOB";
+
+        return this;
+    }
+    // queryType queryType queryType queryType queryType queryType queryType 
 
     querySQL *select()
     {
@@ -79,7 +206,7 @@ public:
         return this;
     }
 
-    querySQL *insert(string expression)
+    querySQL *insert()
     {
         this->queryType = "insert";
         return this;
@@ -90,8 +217,8 @@ public:
         this->queryType = "update";
         return this;
     }
-
-    querySQL *delete1()
+    
+    querySQL *remove() // remove = delete SQL
     {
         this->queryType = "delete";
         return this;
@@ -110,6 +237,11 @@ public:
         return this;
     }
 
+    querySQL *distinct()
+    {
+        this->queryType = "distinct";
+        return this;
+    }
     //------------------------------------
     // сбор информации
 
@@ -183,9 +315,16 @@ public:
         return this;
     }
 
+    querySQL *BetweenFields(string fields1, string fields2)
+    {
+        this->fields1 = fields1;
+        this->fields2 = fields2;
+
+        return this;
+    }
+
 private:
     // исключения
-    string fieldIF;
     string conditionWhere[7] = {"=", "!=", "<>", ">", "<", "<=", ">="};
 
     // delete informatiom
@@ -194,6 +333,10 @@ private:
     //  update informatiom
     string strSetUpdate;
     string strWhereUpdate;
+
+    //between informatiom
+    string fields1;
+    string fields2;
 
     // результаты сбора инф
     vector<string> vfields;
@@ -208,5 +351,5 @@ private:
 
     // результаты билдеров
     string sql;
-
+    string operatorType;
 };
