@@ -40,14 +40,47 @@ public:
         this->fieldType = "REAL";
         return this;
     }
+    Fields* primaryKey()
+    {
+        this->pKey ="PRIMARY KEY";
+        return this;
+    }
+    Fields* autoincrement()
+    {
+        if (this->fieldType == "INTEGER" && this->pKey == "PRIMARY KEY")
+            this->autoI ="AUTOINCREMENT";
+        else
+            throw exception("Wrong field type. Please, use INTEGER PRIMARY KEY");
+        return this;
+    }
+    Fields* notNull()
+    {
+        this->nNull = "NOT NULL";
+        return this;
+    }
+    Fields* Default(string value)
+    {
+        this->Def = "DEFAULT " + value;
+        return this;
+    }
+    Fields* unique()
+    {
+        this->Uni = "UNIQUE";
+        return this;
+    }
     string getField()
     {
-        return this->fieldName + ' ' + this->fieldType;
+        return this->fieldName + ' ' + this->fieldType+' '+this->pKey+' '+this->autoI+' '+this->Uni+ ' ' + this->nNull + ' ' + this->Def;
     }
+
 private:
     string fieldType;
     string fieldName;
-    string fieldIndex;
+    string pKey="";
+    string autoI="";
+    string nNull="";
+    string Def="";
+    string Uni = "";
 };
 
 class Sql3_scheme {
@@ -56,64 +89,87 @@ public:
     string create(bool ifNotExists = false)
     {
 
-        string sql = "CREATE TABLE ";
+        this->sql = "CREATE TABLE ";
         if (ifNotExists)
-            sql = sql + "IF NOT EXISTS ";
+            this->sql = this->sql + "IF NOT EXISTS ";
 
-        sql = sql + this->tableName;
-        sql = sql + '(' + '\n';
+        this->sql = this->sql + this->tableName;
+        this->sql = this->sql + '(' + '\n';
         for (int i = 0;i < this->fields.size();i++)
         {    
-                sql = sql + this->fields[i]->getField();
+            this->sql = this->sql + this->fields[i]->getField();
             
             if (this->fields.size() - 1 == i)
-                sql = sql + '\n';
+                this->sql = this->sql + '\n';
             else
-                sql = sql + ',' + '\n';
+                this->sql = this->sql + ',' + '\n';
         }
-        sql = sql + ");";
-        return sql;
+        this->sql = this->sql + ");";
+        clear();
+        return this->sql;
     }
     string drop(bool ifExists = false)
     {
-        string sql = "DROP TABLE ";
+        this->sql = "DROP TABLE ";
         if (ifExists)
-            sql = sql + "IF NOT EXISTS ";
-       sql=sql + this->tableName;
-        return sql;
+            this->sql = this->sql + "IF NOT EXISTS ";
+        this->sql= this->sql + this->tableName;
+       clear();
+        return this->sql;
     }
     string rename(string newTableName)
     {
-        string sql = "ALTER TABLE " + this->tableName + " RENAME TO " + newTableName;
-        return sql;
+        this->sql = "ALTER TABLE " + this->tableName + " RENAME TO " + newTableName;
+        clear();
+        return this->sql;
     }
     string dropColumn(string columnName)
     {
-        string sql = "ALTER TABLE " + this->tableName + " DROP COLUMN " + columnName;
-        return sql;
+        this->sql = "ALTER TABLE " + this->tableName + " DROP COLUMN " + columnName;
+        clear();
+        return this->sql;
     }
-    string addColumn(string columnName,string columnType)
+    string addColumn(Fields* field)
     {
-        int e = 1;
-
-
-        for (int i = 0;i < 5;i++)
-        {
-            if (columnType == typeField[i])
-            {
-                string sql = "ALTER TABLE " + this->tableName + " ADD COLUMN " + columnName + ' ' + columnType;
-                e = 0;
-                return sql;
-                break;
-            }
-        }
-        if (e)
-            throw exception("Wrong field type! Please use types: INTEGER, BLOB, REAL, NUMERIC, TEXT");
+                 this->sql = "ALTER TABLE " + this->tableName + " ADD COLUMN " + field->getField();
+                clear();
+                return this->sql;
     }
     string renameColumn(string columnName, string newColumnName)
     {
-        string sql = "ALTER TABLE " + this->tableName + " RENAME COLUMN " + columnName +" TO " + newColumnName;
-        return sql;
+        this->sql = "ALTER TABLE " + this->tableName + " RENAME COLUMN " + columnName +" TO " + newColumnName;
+        clear();
+        return this->sql;
+    }
+    string createIndex(string indexName, bool ifNotExists=false)
+    {
+        this->sql = "CREATE INDEX ";
+        if (ifNotExists)
+            this->sql = this->sql + "IF NOT EXISTS ";
+        this->sql = this->sql  + indexName + " ON " + this->tableName + " (";
+        for (int i = 0;i < this->columnsToIndex.size();i++)
+        {
+            this->sql = this->sql + this->columnsToIndex[i];
+
+            if (this->columnsToIndex.size() - 1 == i)
+                this->sql = this->sql+')';
+            else
+                this->sql = this->sql + ',' + ' ';
+        }
+        return this->sql;
+        clear();
+    }
+    string dropIndex(string indexName)
+    {
+        this->sql = "DROP INDEX " + indexName;
+        return this->sql;
+        clear();
+    }
+    string reindex(string indexOrTableName)
+    {
+        this->sql = "REINDEX " + indexOrTableName;
+        return this->sql;
+        clear();
     }
     Sql3_scheme* table(string tableName)
     {
@@ -130,9 +186,28 @@ public:
         Fields* field = new Fields;
         return field;
     }
+    Sql3_scheme* addColumnToIndex(string columnName)
+    {
+        this->columnsToIndex.push_back(columnName);
+            return this;
+    }
+    void clear()
+    {
+        for (int i = 0;i < this->fields.size();i++) {
+            delete this->fields[i];
+        }
+        this->tableName.clear();
+        vector<Fields*>().swap(this->fields);
+        vector<string>().swap(this->columnsToIndex);
+    }
+    string getRawSql()
+    {
+        return this->sql;
+    }
 private:
     string tableName;
     vector<Fields*> fields;
     string typeField[5] = { "INTEGER","BLOB","REAL","NUMERIC","TEXT" };
+    string sql;
+    vector<string> columnsToIndex;
 };
-
