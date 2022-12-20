@@ -42,18 +42,45 @@ public:
     }
     Fields* primaryKey()
     {
-        this->limit = "PRIMARY KEY";
+        this->pKey ="PRIMARY KEY";
+        return this;
+    }
+    Fields* autoincrement()
+    {
+        if (this->fieldType == "INTEGER" && this->pKey == "PRIMARY KEY")
+            this->autoI ="AUTOINCREMENT";
+        else
+            throw exception("Wrong field type. Please, use INTEGER PRIMARY KEY");
+        return this;
+    }
+    Fields* notNull()
+    {
+        this->nNull = "NOT NULL";
+        return this;
+    }
+    Fields* Default(string value)
+    {
+        this->Def = "DEFAULT " + value;
+        return this;
+    }
+    Fields* unique()
+    {
+        this->Uni = "UNIQUE";
         return this;
     }
     string getField()
     {
-        return this->fieldName + ' ' + this->fieldType+' '+this->limit;
+        return this->fieldName + ' ' + this->fieldType+' '+this->pKey+' '+this->autoI+' '+this->Uni+ ' ' + this->nNull + ' ' + this->Def;
     }
 
 private:
     string fieldType;
     string fieldName;
-    string limit;
+    string pKey="";
+    string autoI="";
+    string nNull="";
+    string Def="";
+    string Uni = "";
 };
 
 class Sql3_scheme {
