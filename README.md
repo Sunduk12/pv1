@@ -32,7 +32,7 @@
 
 ## Работа с таблицами
 
-Для начала нам нужно создать таблицу. Для этого испульзуем:
+Для начала нам нужно создать таблицу. Для этого используем:
 ```c++
 Sql3_scheme* new_scheme = new Sql3_scheme; 
 	string sql = new_scheme->table("chello")
@@ -63,7 +63,7 @@ Sql3_scheme* new_scheme4 = new Sql3_scheme;
 	sqlite3orm::getInstance()->execAndPrint(sqll3);
 ```
 
-<br>Если хотите добавить новый столбец столбец:
+<br>Если хотите добавить новый столбец:
 
 ```c++
 Sql3_scheme* new_scheme5 = new Sql3_scheme;
@@ -73,7 +73,7 @@ Sql3_scheme* new_scheme5 = new Sql3_scheme;
 	cout << sqll4 << '\n';
 	sqlite3orm::getInstance()->execAndPrint(sqll4);
 ```
-<br>Ессли хотите переименовать столбец:
+<br>Если хотите переименовать столбец:
 
 ```c++
 Sql3_scheme* new_scheme6 = new Sql3_scheme;
