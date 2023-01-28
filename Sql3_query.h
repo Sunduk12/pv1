@@ -100,82 +100,67 @@ public:
             return this->buildReplace();
         else if (this->queryType == "distinct")
             return this->buildDistinct();
-        // operatorType
-        // else if (this->operatorType == "IN")
-        //     return this->buildOperatorIN();
-        // else if (this->operatorType == "NOT IN")
-        //     return this->buildOperatorNOTIN();
-        // else if (this->operatorType == "BETWEEN")
-        //     return this->buildOperatorBetween();
-        // else if (this->operatorType == "NOT BETWEEN")
-        //     return this->buildOperatorNotBetween();
-        // else if (this->operatorType == "LIKE")
-        //     return this->buildOperatorLIKE();
-        // else if (this->operatorType == "GLOB")
-        //     return this->buildOperatorGLOB();
-        // else if (this->operatorType == "IS NULL")
-        //     return this->buildOperatorISNULL();
-        // else if (this->operatorType == "IS NOT NULL")
-        //     return this->buildOperatorISnotNULL();
+ 
 
         return "error";
     }
     // билдеры для operatorType ___________
-    string buildOperatorISnotNULL()
-    {
-        sql = "SELECT * FROM " + this->tableName + "\n" + "WHERE " + this->columnName + " IS NOT NULL" + ";";
+    // string buildOperatorISnotNULL()
+    // {
+    //     sql = "SELECT * FROM " + this->tableName + "\n" + "WHERE " + this->columnName + " IS NOT NULL" + ";";
 
-        return sql;
-    }
+    //     return sql;
+    // }
 
-    string buildOperatorISNULL()
-    {
-        sql = "SELECT * FROM " + this->tableName + "\n" + "WHERE " + this->columnName + " IS NULL" + ";";
+    // string buildOperatorISNULL()
+    // {
+    //     sql = "SELECT * FROM " + this->tableName + "\n" + "WHERE " + this->columnName + " IS NULL" + ";";
 
-        return sql;
-    }
+    //     return sql;
+    // }
 
-    string buildOperatorGLOB()
-    {
-        sql = "SELECT * FROM " + this->tableName + "\n" + "WHERE " + this->columnName + " GLOB " + this->fieldName + ";";
+    // string buildOperatorGLOB()
+    // {
+    //     sql = "SELECT * FROM " + this->tableName + "\n" + "WHERE " + this->columnName + " GLOB " + this->fieldName + ";";
 
-        return sql;
-    }
+    //     return sql;
+    // }
 
-    string buildOperatorLIKE()
-    {
-        sql = "SELECT * FROM " + this->tableName + "\n" + "WHERE " + this->columnName + " LIKE " + this->fieldName + ";";
+    // string buildOperatorLIKE()
+    // {
+    //     sql = "SELECT * FROM " + this->tableName + "\n" + "WHERE " + this->columnName + " LIKE " + this->fieldName + ";";
 
-        return sql;
-    }
+    //     return sql;
+    // }
 
-    string buildOperatorIN()
-    {
-        sql = "SELECT * FROM " + this->tableName + "\n" + "WHERE " + this->columnName + " IN " + " ( " + this->fieldName + " ) " + ";";
+    // string buildOperatorIN()
+    // {
+    //     sql = "SELECT * FROM " + this->tableName + "\n" + "WHERE " + this->columnName + " IN " + " ( " + this->fieldName + " ) " + ";";
 
-        return sql;
-    }
+    //     return sql;
+    // }
 
-    string buildOperatorNOTIN()
-    {
-        sql = "SELECT * FROM " + this->tableName + "\n" + "WHERE " + this->columnName + " NOT IN " + " ( " + this->fieldName + " ) " + ";";
+    // string buildOperatorNOTIN()
+    // {
+    //     sql = "SELECT * FROM " + this->tableName + "\n" + "WHERE " + this->columnName + " NOT IN " + " ( " + this->fieldName + " ) " + ";";
 
-        return sql;
-    }
+    //     return sql;
+    // }
 
-    string buildOperatorBetween()
-    {
-        sql = "SELECT * FROM " + this->tableName + "\n" + "WHERE " + this->columnName + " BETWEEN " + fields1 + " AND " + fields2 + ";";
+    // string buildOperatorBetween()
+    // {
+    //     sql = "SELECT * FROM " + this->tableName + "\n" + "WHERE " + this->columnName + " BETWEEN " + fields1 + " AND " + fields2 + ";";
 
-        return sql;
-    }
+    //     return sql;
+    // }
 
-    string buildOperatorNotBetween()
-    {
-        sql = "SELECT * FROM " + this->tableName + "\n" + "WHERE " + this->columnName + " NOT BETWEEN " + fields1 + " AND " + fields2 + ";";
+    // string buildOperatorNotBetween()
+    // {
+    //     sql = "SELECT * FROM " + this->tableName + "\n" + "WHERE " + this->columnName + " NOT BETWEEN " + fields1 + " AND " + fields2 + ";";
 
-        return sql;
-    }
+    //     return sql;
+    // }
+    ///////////////////////////////////////////
     // билдеры для queryType _______________
     string buildDistinct()
     {
@@ -194,7 +179,7 @@ public:
 
     string buildDelete()
     {
-        sql = "DELETE FROM " + this->tableName + "\n" + "WHERE " + strWhereDelete;
+        sql = "DELETE FROM " + this->tableName + "\n" + "WHERE " + buildWhereAndOr();
 
         return sql;
     }
@@ -202,7 +187,7 @@ public:
     string buildUpdate()
     {
 
-        sql = "UPDATE " + this->tableName + "\n" + "SET " + strSetUpdate + "\n" + "WHERE " + strWhereUpdate + ";";
+        sql = "UPDATE " + this->tableName + "\n" + "SET " + strSetUpdate + "\n" + "WHERE " + buildWhereAndOr() + ";";
 
         return sql;
     }
@@ -276,9 +261,9 @@ public:
             fields.pop_back();
         }
 
-        sql = this->queryType + " " + fields + " FROM " + tableName + " " + buildWhereAndOr();
+        if (buildWhereAndOr() != "") return sql = this->queryType + " " + fields + " FROM " + tableName + " " + buildWhereAndOr();
+        else return sql = this->queryType + " " + fields + " FROM " + tableName + " ";
 
-        return sql;
     }
 
     string buildInsert()
@@ -286,20 +271,6 @@ public:
         sql = "INSERT INTO " + this->tableName + " ( " + this->columnName + " ) " + " VALUES " + " ( " + this->fieldName + " )";
 
         return sql;
-    }
-    // дополнительный функционал
-
-    void clear()
-    {
-        this->tableName.clear();
-        this->queryType.clear();
-        this->fieldName.clear();
-        this->columnName.clear();
-        this->resAddFields.clear();
-        this->resWhere.clear();
-        this->resWhereOr.clear();
-        this->resWhereAnd.clear();
-        this->sql.clear();
     }
 
     /////////////////////////////////
@@ -336,12 +307,6 @@ public:
         return this;
     }
 
-    querySQL *table(string tableName)
-    {
-        this->tableName = tableName;
-
-        return this;
-    }
 
     querySQL *distinct()
     {
@@ -350,6 +315,12 @@ public:
     }
     //------------------------------------
     // сбор информации
+    querySQL *table(string tableName)
+    {
+        this->tableName = tableName;
+
+        return this;
+    }
 
     querySQL *orWhere(string fieldName, string condition, string value)
     {
@@ -437,19 +408,19 @@ public:
         return this;
     }
 
-    querySQL *whereUpdate(string strWhereUpdate)
-    {
-        this->strWhereUpdate = strWhereUpdate;
+    // querySQL *whereUpdate(string strWhereUpdate)
+    // {
+    //     this->strWhereUpdate = strWhereUpdate;
 
-        return this;
-    }
+    //     return this;
+    // }
 
-    querySQL *whereDelete(string strWhereDelete)
-    {
-        this->strWhereDelete = strWhereDelete;
+    // querySQL *whereDelete(string strWhereDelete)
+    // {
+    //     this->strWhereDelete = strWhereDelete;
 
-        return this;
-    }
+    //     return this;
+    // }
 
     querySQL *BetweenFields(string fields1, string fields2)
     {
@@ -487,6 +458,7 @@ private:
     vector<string> vWhere;
     vector<string> vAndWhere;
     vector<string> vOrWhere;
+    vector<filterOperator*> objectFO;
     string resOrWhere;
     string whereAnd;
     string tableName;

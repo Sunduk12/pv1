@@ -7,18 +7,21 @@
 
 #include "../sqlite3orm.h"
 // #include "../Sql3_scheme.h"
-#include "../Sql3_query.h"
+//  #include "../Sql3_query.h"
+#include "Sql3_queryBuilder.h"
 
-using namespace std;
+
 
 int main(int argc, char const *argv[])
 {
-    querySQL *a = new querySQL();
+    //  querySQL *a = new querySQL();
+    queryBuilder *a = new queryBuilder();
+    /*
     // filterOperator *b = new filterOperator("NAME", "=", "100");
-    filterOperator* where = a->filterWhere("NAME", "=", "100")->operatorIN();
+    // filterOperator* where = a->filterWhere("NAME", "=", "100")->operatorIN();
 
 
-    cout << where->getWhere();
+    //cout << where->getWhere();
     //ОСНОВНЫЕ МЕТОДЫ РАБЛОТЫ С SQLITE3
 
     // метод инсерт
@@ -28,18 +31,15 @@ int main(int argc, char const *argv[])
     // string result =  a->select()->addFields("NAME")->table("COMPANY")->SQL();
 
     // select с условиями
-    // string result =  a->select()->table("COMPANY")->where("SALARY", ">", "100")->andWhere("SALARY", "<", "100")->SQL();
+    // string result =  a->select()->table("COMPANY")->SQL();
     // string result =  a->select()->table("COMPANY")->where("SALARY", ">", "100")->andWhere("SALARY", "<", "100")->andWhere("SALARY", "<", "100")->andWhere("SALARY", "<", "100")->andWhere("SALARY", "<", "100")->SQL();
     // string result =  a->select()->table("COMPANY")->where("SALARY", ">", "100000")->andWhere("SALARY", "<", "100")->orWhere("SALARY", "=", "1000")->andWhere("SALARY", "<", "100")->orWhere("SALARY", "=", "1000")->orWhere("SALARY", "=", "1000")->SQL();
-
-
-    // string result =  a->select()->table("COMPANY")->where("AGE", "<", "20")->andWhere("SALARY", ">=", "100")->SQL();
-
-    // string result =  a->select()->table("COMPANY")->where("AGE", "<", "20")->orWhere("SALARY", ">", "100")->SQL();
+    //string result =  a->select()->table("COMPANY")->where("AGE", "<", "20")->andWhere("SALARY", ">=", "100")->SQL();
+    //string result =  a->select()->table("COMPANY")->where("AGE", "<", "20")->andWhere("SALARY", ">=", "100")->orWhere("SALARY", ">", "100")->SQL();
 
 
     // метод  update
-    // string result =  a->update()->table("COMPANY")->setUpdate("NAME = 'ALEKSANDR'")->whereUpdate("NAME = 'graghdanin'")->SQL();
+    // string result =  a->update()->table("COMPANY")->setUpdate("NAME = 'ALEKSANDR'")->where("NAME", "=", "roma")->SQL();
 
     // метод delete
     // string result =  a->remove()->table("COMPANY")->whereDelete("NAME = 'roma'")->SQL();
@@ -77,12 +77,17 @@ int main(int argc, char const *argv[])
 
     // оператор IS NOT NULL
     //string result = a->operatorISnotNULL()->table("COMPANY")->addColumn("NAME")->SQL();
+*/
+    //table("COMPANY")->addFields("NAME")->where("SALARY", "<", "1000")->
+    string result = a->select()->table("COMPANY")->addFields("NAME")->addFields("SALARY")->SQL();
+    // string result = a->where("1", ">", "3")->where("1", ">", "3")->buildWhereAndOr();
+    cout << result << endl;
+
+    // string result = a->select()->table("COMPANY")->addFields("NAME")->addFields("SALARY")->SQL();
 
 
-    // cout << result << endl;
-
-    // const char *requestSql = result.data();
-    // sqlite3orm::getInstance()->execAndPrint(requestSql);
+    const char *requestSql = result.data();
+    sqlite3orm::getInstance()->execAndPrint(requestSql);
 
     return 0;
 }

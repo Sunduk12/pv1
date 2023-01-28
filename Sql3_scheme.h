@@ -125,6 +125,7 @@ public:
        this->fields.push_back(field);
         return this;
     }
+    
     Fields* newField()
     {
         Fields* field = new Fields;

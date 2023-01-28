@@ -7,6 +7,10 @@ public:
         // обработка всех запросов
         if (this->queryType == "select") return this->buildSelect();
         if (this->queryType == "insert") return this->buildInsert();
+        if (this->queryType == "insert") return this->buildDelete();
+        if (this->queryType == "insert") return this->buildDistinct();
+        if (this->queryType == "insert") return this->buildReplace();
+        if (this->queryType == "insert") return this->buildUpdate();
 
         return "error";
     }
@@ -24,6 +28,7 @@ public:
             for (int i = 0; i < this->vfields.size(); i++)
             {
                 fields += this->vfields[i] + "," + " ";
+
             }
             fields.pop_back();
             fields.pop_back();
@@ -34,6 +39,36 @@ public:
     string buildInsert()
     {
         sql = "INSERT INTO " + this->tableName + " ( " + this->columnName + " ) " + " VALUES " + " ( " + this->fieldName + " )";
+
+        return sql;
+    }
+
+    string buildDistinct()
+    {
+        // выборка уникальных значений из колонки!
+        sql = "SELECT DISTINCT " + columnName + " FROM " + this->tableName + ";";
+
+        return sql;
+    }
+
+    string buildReplace()
+    {
+        sql = "INSERT OR REPLACE INTO " + this->tableName + " ( " + this->columnName + " ) " + "\n" + "VALUES " + " ( " + this->fieldName + " ) ";
+
+        return sql;
+    }
+
+    string buildDelete()
+    {
+        sql = "DELETE FROM " + this->tableName + "\n" + buildWhere();
+
+        return sql;
+    }
+
+    string buildUpdate()
+    {
+
+        sql = "UPDATE " + this->tableName + "\n" + "SET " + strSetUpdate + "\n" + buildWhere() + ";";
 
         return sql;
     }
@@ -57,6 +92,13 @@ public:
     }
 
     // СБОР ИНФОРМАЦИИ ДЛЯ БИЛДЕРОВ
+    queryBuilder *setUpdate(string strSetUpdate)
+    {
+        this->strSetUpdate = strSetUpdate;
+
+        return this;
+    }
+
     queryBuilder *table(string tableName)
     {
         this->tableName = tableName;
@@ -115,12 +157,35 @@ public:
         this->queryType = "select";
         return this;
     }
+
     queryBuilder *insert()
     {
         this->queryType = "insert";
         return this;
     }
 
+    queryBuilder *update()
+    {
+        this->queryType = "update";
+        return this;
+    }
+
+    queryBuilder *remove() // remove = delete SQL
+    {
+        this->queryType = "delete";
+        return this;
+    }
+
+    queryBuilder *replace()
+    {
+        this->queryType = "replace";
+        return this;
+    }
+    queryBuilder *distinct()
+    {
+        this->queryType = "distinct";
+        return this;
+    }
 private:
     vector<string> vfields;
     string queryType;
@@ -128,7 +193,8 @@ private:
     string columnName;
     string fieldName;
     string sql;
-
+    //update
+    string strSetUpdate;
     // для where
     vector<string> vWhere;
     string resWhere;
